@@ -17,8 +17,56 @@ services:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
-            - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    #Weather
+    App\services\Weather\Domain\:
+        resource: '../src/services/Weather/Domain/*'
+        exclude: '../src/services/Weather/Domain/{Entity,ValueObject,Event,DTO,Exception,Command,Query}'
+
+    App\services\Weather\Application\:
+        resource: '../src/services/Weather/Application/*'
+        exclude: '../src/services/Weather/Application/{QueryResult}'
+
+    App\services\Weather\Infrastructure\:
+        resource: '../src/services/Weather/Infrastructure/*'
+        exclude: '../src/services/Weather/Infrastructure/{Queue}'
+
+    App\services\Weather\Presentation\:
+        resource: '../src/services/Weather/Presentation/*'
+        exclude: '../src/services/Weather/Presentation/{Request,Response}'
+
+    App\services\Weather\Infrastructure\Api\Provider\WeatherProviderInterface:
+        class: App\services\Weather\Infrastructure\Api\WeatherApi\WeatherApiProvider
+
+    App\services\Weather\Domain\Repository\WeatherRepositoryInterface:
+        class: App\services\Weather\Infrastructure\Repository\ExternalApiWeatherRepository
+
+    #Subscription
+    App\services\Subscription\Domain\:
+        resource: '../src/services/Subscription/Domain/*'
+        exclude: '../src/services/Subscription/Domain/{Entity,ValueObject,Event,DTO,Exception,Command,Query}'
+
+    App\services\Subscription\Application\:
+        resource: '../src/services/Subscription/Application/*'
+        exclude: '../src/services/Subscription/Application/{QueryResult}'
+
+    App\services\Subscription\Infrastructure\:
+        resource: '../src/services/Subscription/Infrastructure/*'
+        exclude: '../src/services/Subscription/Infrastructure/{Queue}'
+
+    App\services\Subscription\Presentation\:
+        resource: '../src/services/Subscription/Presentation/*'
+        exclude: '../src/services/Subscription/Presentation/{Request,Response}'
+
+    App\services\Subscription\Domain\Repository\SubscriptionRepositoryInterface:
+        class: App\services\Subscription\Infrastructure\Repository\RawSubscriptionRepository
+
+    #Notification
+    App\services\Notification\Domain\:
+        resource: '../src/services/Notification/Domain/*'
+        exclude: '../src/services/Notification/Domain/{Entity,ValueObject,Event,DTO,Exception,Command,Query}'
+
+    App\services\Notification\Infrastructure\:
+        resource: '../src/services/Notification/Infrastructure/*'
+        exclude: '../src/services/Notification/Infrastructure/{Queue}'

@@ -1,0 +1,80 @@
+version: '3'
+
+services:
+
+    #PHP Service
+    php:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: genesis-app
+        restart: unless-stopped
+        working_dir: /var/www
+        tty: true
+        ports:
+            - "9000:9000"
+        volumes:
+            - ./:/var/www
+            - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+        networks:
+            - genesis-network
+
+    #Nginx Service
+    webserver:
+        image: nginx:alpine
+        container_name: genesis-server
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "8001:8001"
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - php
+            - db
+        networks:
+            - genesis-network
+
+    #PostgreSQL Service
+    db:
+        image: postgres:15
+        container_name: genesis-db
+        restart: always
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        ports:
+            - "${POSTGRES_PORT}:5432"
+        volumes:
+            - ./docker/postgresql:/var/lib/postgresql
+        networks:
+            - genesis-network
+
+    #Rabbitmq Service
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: genesis-rabbitmq
+        restart: unless-stopped
+        ports:
+            - "${RABBITMQ_PORT}:5672"
+            - "${RABBITMQ_ADMIN_PORT}:15672"
+        environment:
+            RABBITMQ_DEFAULT_VHOST: vhost
+        networks:
+            - genesis-network
+
+    #Redis Service
+    redis:
+        image: redis:7.2.3
+        container_name: genesis-redis
+        ports:
+            - "6380:6379"
+        volumes:
+            - ./docker/redis:/data
+        networks:
+            - genesis-network
+networks:
+    genesis-network:
+        driver: bridge

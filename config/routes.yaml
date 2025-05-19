@@ -1,5 +1,7 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
+weather_controllers:
+    resource: '../src/services/Weather/Presentation/Controller/'
+    type: attribute
+
+subscription_controllers:
+    resource: '../src/services/Subscription/Presentation/Controller/'
     type: attribute
